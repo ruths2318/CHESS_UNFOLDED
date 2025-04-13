@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Summarizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            background-color: #f2f2f2;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 600px;
+            margin: auto;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 10px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            resize: vertical;
+        }
+
+        input[type="file"] {
+            margin-top: 8px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #loadingSpinner {
+            display: none;
+            margin: 20px auto;
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #007bff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #summaryOutput {
+            background-color: #fff;
+            max-width: 600px;
+            margin: 30px auto 0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            
+            white-space: pre-wrap;
+        }
+    </style>
+
+    <script>
+        async function handleSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('pgnForm');
+            const formData = new FormData(form);
+
+            const spinner = document.getElementById('loadingSpinner');
+            const outputDiv = document.getElementById('summaryOutput');
+            spinner.style.display = 'block';
+            outputDiv.innerText = '';
+
+            try {
+                const response = await fetch("/game_summarizer/summarize/", {
+                    method: "POST",
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    outputDiv.innerHTML = data.summary;
+                } else {
+                    outputDiv.innerText = data.error || "Something went wrong.";
+                }
+            } catch (err) {
+                outputDiv.innerText = "Error submitting the form.";
+            } finally {
+                spinner.style.display = 'none';
+            }
+        }
+
+        function handleRefresh() {
+            document.getElementById('pgnForm').reset();
+            document.getElementById('summaryOutput').innerText = '';
+        }
+    </script>
+</head>
+<body>
+    <h1>Game Summarizer</h1>
+
+    <form id="pgnForm" onsubmit="handleSubmit(event)">
+        {% csrf_token %}
+        <label for="pgn_text">Paste PGN Text:</label>
+        <textarea name="pgn_text" id="pgn_text"></textarea>
+
+        <label for="pgn_file">Or Upload PGN File:</label>
+        <input type="file" name="pgn_file" id="pgn_file" accept=".pgn"/>
+
+        <div style="margin-top: 20px;">
+            <button type="submit">Summarize</button>
+            <button type="button" onclick="handleRefresh()">Clear</button>
+        </div>
+    </form>
+
+    <div id="loadingSpinner"></div>
+
+    <div id="summaryOutput"></div>
+</body>
+</html>
