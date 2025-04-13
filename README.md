@@ -1,5 +1,6 @@
 # CHESS_UNFOLDED
 
+To run the code:
 1. Create the virtual environment : python -m venv myenv
 2. Activate the virtual environment : myenv\Scripts\activate
 3. Install all the dependencies : pip install -r requirements.txt
