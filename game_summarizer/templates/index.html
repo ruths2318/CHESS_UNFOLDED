@@ -107,6 +107,14 @@
                 const data = await response.json();
                 if (response.ok) {
                     outputDiv.innerHTML = data.summary;
+                    if (data.image_url) {
+                        const img = document.createElement("img");
+                        img.src = data.image_url;
+                        img.alt = "Time Analysis Plot";
+                        img.style.marginTop = "20px";
+                        img.style.maxWidth = "100%";
+                        outputDiv.appendChild(img);
+                    }
                 } else {
                     outputDiv.innerText = data.error || "Something went wrong.";
                 }
