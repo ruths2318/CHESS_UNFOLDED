@@ -14,12 +14,12 @@
             color: #333;
         }
 
-        form {
+        section {
             background-color: #fff;
             padding: 30px;
             border-radius: 12px;
-            max-width: 600px;
-            margin: auto;
+            max-width: 700px;
+            margin: 30px auto;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
         }
 
@@ -29,18 +29,14 @@
             margin-top: 15px;
         }
 
-        textarea {
+        textarea, select, input[type="file"] {
             width: 100%;
-            height: 200px;
-            padding: 10px;
             margin-top: 5px;
+            padding: 10px;
             border-radius: 6px;
             border: 1px solid #ccc;
             resize: vertical;
-        }
-
-        input[type="file"] {
-            margin-top: 8px;
+            margin-bottom: 20px;
         }
 
         button {
@@ -51,8 +47,8 @@
             border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 20px;
             margin-right: 10px;
+            margin-top: 10px;
         }
 
         button:hover {
@@ -77,71 +73,138 @@
 
         #summaryOutput {
             background-color: #fff;
-            max-width: 600px;
+            max-width: 700px;
             margin: 30px auto 0;
             padding: 20px;
             border-radius: 12px;
             box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            
             white-space: pre-wrap;
         }
     </style>
-
-    <script>
-        async function handleSubmit(event) {
-            event.preventDefault();
-            const form = document.getElementById('pgnForm');
-            const formData = new FormData(form);
-
-            const spinner = document.getElementById('loadingSpinner');
-            const outputDiv = document.getElementById('summaryOutput');
-            spinner.style.display = 'block';
-            outputDiv.innerText = '';
-
-            try {
-                const response = await fetch("/game_summarizer/summarize/", {
-                    method: "POST",
-                    body: formData
-                });
-
-                const data = await response.json();
-                if (response.ok) {
-                    outputDiv.innerHTML = data.summary;
-                } else {
-                    outputDiv.innerText = data.error || "Something went wrong.";
-                }
-            } catch (err) {
-                outputDiv.innerText = "Error submitting the form.";
-            } finally {
-                spinner.style.display = 'none';
-            }
-        }
-
-        function handleRefresh() {
-            document.getElementById('pgnForm').reset();
-            document.getElementById('summaryOutput').innerText = '';
-        }
-    </script>
 </head>
 <body>
-    <h1>Game Summarizer</h1>
 
+<h1>Game Summarizer</h1>
+
+<!-- 1️⃣ Upload New PGN Section -->
+<section>
+    <h2>Upload and Summarize a New Game</h2>
     <form id="pgnForm" onsubmit="handleSubmit(event)">
         {% csrf_token %}
         <label for="pgn_text">Paste PGN Text:</label>
-        <textarea name="pgn_text" id="pgn_text"></textarea>
+        <textarea name="pgn_text" id="pgn_text" placeholder="Paste your PGN here..."></textarea>
 
         <label for="pgn_file">Or Upload PGN File:</label>
         <input type="file" name="pgn_file" id="pgn_file" accept=".pgn"/>
 
-        <div style="margin-top: 20px;">
-            <button type="submit">Summarize</button>
+        <div>
+            <button type="submit">Summarize New Game</button>
             <button type="button" onclick="handleRefresh()">Clear</button>
         </div>
     </form>
+</section>
 
-    <div id="loadingSpinner"></div>
+<hr>
 
-    <div id="summaryOutput"></div>
+<!-- 2️⃣ Analyze Existing Games Section -->
+<section>
+    <h2>Analyze an Existing Game</h2>
+
+    {% if games %}
+    <label for="existingGame">Select a Past Game:</label>
+    <select id="existingGame">
+        <option value="">-- Select a Game --</option>
+        {% for game in games %}
+            <option value="{{ game.id }}">
+                {{ game.date }} | {{ game.player_1 }} vs {{ game.player_2 }} ({{ game.result }})
+            </option>
+        {% endfor %}
+    </select>
+    <button onclick="analyzeSelectedGame()">Analyze Selected Game</button>
+    {% else %}
+    <p>No past games found.</p>
+    {% endif %}
+</section>
+
+<div id="loadingSpinner"></div>
+
+<div id="summaryOutput"></div>
+
+<!-- JavaScript -->
+<script>
+async function handleSubmit(event) {
+    event.preventDefault();
+    const form = document.getElementById('pgnForm');
+    const formData = new FormData(form);
+
+    const spinner = document.getElementById('loadingSpinner');
+    const outputDiv = document.getElementById('summaryOutput');
+    spinner.style.display = 'block';
+    outputDiv.innerText = '';
+
+    try {
+        const response = await fetch("/game_summarizer/summarize/", {
+            method: "POST",
+            body: formData
+        });
+        const data = await response.json();
+        if (response.ok) {
+            showSummary(data);
+        } else {
+            outputDiv.innerText = data.error || "Something went wrong.";
+        }
+    } catch (err) {
+        outputDiv.innerText = "Error submitting the form.";
+    } finally {
+        spinner.style.display = 'none';
+    }
+}
+
+async function analyzeSelectedGame() {
+    const select = document.getElementById('existingGame');
+    const gameId = select.value;
+
+    if (!gameId) {
+        alert("Please select a game!");
+        return;
+    }
+
+    const spinner = document.getElementById('loadingSpinner');
+    const outputDiv = document.getElementById('summaryOutput');
+    spinner.style.display = 'block';
+    outputDiv.innerText = '';
+
+    try {
+        const response = await fetch(`/game_summarizer/analyze_existing/${gameId}/`);
+        const data = await response.json();
+        if (response.ok) {
+            showSummary(data);
+        } else {
+            outputDiv.innerText = data.error || "Something went wrong.";
+        }
+    } catch (err) {
+        outputDiv.innerText = "Error fetching existing game.";
+    } finally {
+        spinner.style.display = 'none';
+    }
+}
+
+function showSummary(data) {
+    const outputDiv = document.getElementById('summaryOutput');
+    outputDiv.innerHTML = data.summary;
+    if (data.image_url) {
+        outputDiv.innerHTML += `
+            <h3 style="margin-top: 30px;">⏱ Time Analysis Plot</h3>
+            <img src="${data.image_url}" alt="Time Analysis Plot" style="max-width: 100%; margin-top: 10px;" />
+        `;
+    }
+}
+
+function handleRefresh() {
+    document.getElementById('pgnForm').reset();
+    document.getElementById('summaryOutput').innerText = '';
+}
+</script>
+
 </body>
 </html>

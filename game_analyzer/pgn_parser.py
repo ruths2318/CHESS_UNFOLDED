@@ -4,6 +4,7 @@ import io
 import chess
 import chess.pgn
 from .game import ChessGame, Move
+from datetime import datetime
 
 class PGNParser:
     @staticmethod
@@ -24,6 +25,7 @@ class PGNParser:
         headers = game.headers
 
         g = ChessGame(
+            date=datetime.strptime(headers["Date"], "%Y.%m.%d").date(),
             white=headers["White"],
             black=headers["Black"],
             result=headers["Result"],
