@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 
 # Create your views here.
 from django.http import JsonResponse
@@ -8,7 +8,9 @@ from game_analyzer import summarizer
 
 
 def index(request):
-    return render(request, 'index.html')
+    games = Game.objects.all().order_by('-date')  # Show recent first
+    return render(request, 'index.html', {"games": games})
+    #return render(request, 'index.html')
 
 def summarize(request):
     if request.method == 'POST':
@@ -44,3 +46,13 @@ def summarize(request):
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 
+def analyze_existing_game(request, game_id):
+    if request.method == 'GET':
+        game = get_object_or_404(Game, id=game_id)
+        
+        response_text, objects = summarizer.get_summary(game.pgn_text)
+
+        return JsonResponse({
+            'summary': response_text,
+            'image_url': 'time_plot.png'
+        })
