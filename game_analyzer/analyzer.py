@@ -2,7 +2,7 @@
 from stockfish import Stockfish
 import chess
 import chess.pgn
-from game import ChessGame
+from .game import ChessGame
 
 class Analyzer:
     def __init__(self, stockfish_path="stockfish"):

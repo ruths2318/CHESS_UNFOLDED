@@ -3,7 +3,7 @@ import re
 import io
 import chess
 import chess.pgn
-from game import ChessGame, Move
+from .game import ChessGame, Move
 
 class PGNParser:
     @staticmethod
