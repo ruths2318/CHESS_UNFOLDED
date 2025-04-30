@@ -29,7 +29,8 @@ class PGNParser:
             white=headers["White"],
             black=headers["Black"],
             result=headers["Result"],
-            time_control=headers["TimeControl"]
+            time_control=headers["TimeControl"],
+            link=headers['Link']
         )
         g.metadata = dict(headers)
 

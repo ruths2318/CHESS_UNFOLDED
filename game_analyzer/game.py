@@ -9,12 +9,13 @@ class Move:
         self.eval_after = None
 
 class ChessGame:
-    def __init__(self, date,white, black, result, time_control, moves=None):
+    def __init__(self, date,white, black, result, time_control, link,moves=None):
         self.date=date
         self.white = white
         self.black = black
         self.result = result
         self.time_control = time_control
+        self.link=link
         self.moves = moves if moves else []
         self.metadata = {}
 

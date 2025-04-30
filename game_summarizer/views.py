@@ -35,14 +35,15 @@ def summarize(request):
             result=objects['result']
         )
 
-        games = Game.objects.all()
+        #games = Game.objects.all()
         #print(games)
 
         # return the plots
         # summary    
         # game link
         return JsonResponse({'summary': response_text,
-                             "image_url":'time_plot.png'})
+                             "image_url":'/static/plots/time_plot.png',
+                             "video_url": objects['link']})
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
 
@@ -54,5 +55,6 @@ def analyze_existing_game(request, game_id):
 
         return JsonResponse({
             'summary': response_text,
-            'image_url': 'time_plot.png'
+            'image_url': '/static/plots/time_plot.png',
+            "video_url": objects['link']
         })

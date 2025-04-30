@@ -3,8 +3,14 @@ import matplotlib.pyplot as plt
 import chess
 import chess.svg
 import os
+from django.conf import settings
 
-def plot_time_deltas(game, save_path="time_plot.png"):
+def plot_time_deltas(game, filename="time_plot.png"):
+
+    folder = os.path.join(settings.BASE_DIR, "game_analyzer", "static", "plots")
+    os.makedirs(folder, exist_ok=True)
+
+    full_path = os.path.join(folder, filename)
    
     white_deltas, black_deltas = game.get_time_deltas()
 
@@ -20,7 +26,7 @@ def plot_time_deltas(game, save_path="time_plot.png"):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    plt.savefig(save_path)
+    plt.savefig(full_path)
     plt.close()
 
 def save_board_snapshot(fen, filename="board.svg"):

@@ -18,7 +18,7 @@ def get_objects(pgn_text):
     game=parser.parse_pgn(pgn_text)
     #print(game.moves)
     white,black=game.get_time_deltas()
-    print(sum(white)+sum(black))
+    #print(sum(white)+sum(black))
     plot_time_deltas(game)
     analyzer=Analyzer(r".\engine\stockfish\stockfish-windows-x86-64-avx2.exe")
     analyzer.analyze_game(game)
@@ -31,7 +31,7 @@ def get_objects(pgn_text):
     mistakes=analyzer.find_mistakes(game)
     #print("mistakes",mistakes)
     highlights=analyzer.find_highlights(game)
-    print("highlights",highlights)
+    #print("highlights",highlights)
     objects={}
     objects['blunders']=blunders
     objects['best_moves']=best_moves
@@ -41,6 +41,7 @@ def get_objects(pgn_text):
     objects['player_2']=game.black
     objects['date']=game.date
     objects['result']=objects['player_1'] if game.result == '1-0' else objects['player_2']
+    objects['link']=game.link
     return objects
 
 def generate_llm_summary(objects):
