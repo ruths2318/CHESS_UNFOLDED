@@ -28,8 +28,9 @@ class PGNParser:
             date=datetime.strptime(headers["Date"], "%Y.%m.%d").date(),
             white=headers["White"],
             black=headers["Black"],
-            result=headers["Result"],
-            time_control=headers["TimeControl"]
+            result=headers["Termination"],
+            time_control=headers["TimeControl"],
+            link=headers['Link']
         )
         g.metadata = dict(headers)
 
@@ -41,7 +42,7 @@ class PGNParser:
             san = board.san(move)
             comment = node.comment
             clock = self.parse_clock(comment)
-            timestamp = None  # Extend if needed
+            timestamp = None  
 
             g.add_move(Move(move_number, san, clock_time=clock, timestamp=timestamp))
             move_number += 1

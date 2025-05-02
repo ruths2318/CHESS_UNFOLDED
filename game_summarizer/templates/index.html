@@ -2,68 +2,228 @@
 <html>
 <head>
     <title>Game Summarizer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-dark: #3a5a8a;
+            --secondary: #ff7e5f;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            padding: 40px;
-            background-color: #f2f2f2;
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        h1, h2 {
+            color: var(--dark);
+            font-weight: 600;
         }
 
         h1 {
             text-align: center;
-            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            padding-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 8px;
         }
 
         section {
-            background-color: #fff;
+            background-color: white;
             padding: 30px;
-            border-radius: 12px;
-            max-width: 700px;
+            border-radius: 16px;
+            max-width: 800px;
             margin: 30px auto;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+            animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        section:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        section:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 25px rgba(0,0,0,0.12);
         }
 
         label {
-            font-weight: bold;
+            font-weight: 600;
             display: block;
-            margin-top: 15px;
+            margin: 15px 0 8px;
+            color: var(--dark);
         }
 
         textarea, select, input[type="file"] {
             width: 100%;
-            margin-top: 5px;
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            resize: vertical;
-            margin-bottom: 20px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid #ced4da;
+            background-color: #f8f9fa;
+            transition: all 0.3s;
+            font-size: 15px;
         }
 
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 16px;
+        textarea:focus, select:focus, input[type="file"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
+            background-color: white;
+        }
+
+        textarea {
+            min-height: 150px;
+        }
+
+        input[type="file"]::file-selector-button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            background-color: var(--light);
+            border: 1px solid #ced4da;
             cursor: pointer;
+            margin-right: 10px;
+            transition: all 0.2s;
+        }
+
+        input[type="file"]::file-selector-button:hover {
+            background-color: #e9ecef;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
             margin-right: 10px;
             margin-top: 10px;
         }
 
-        button:hover {
-            background-color: #0056b3;
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--dark);
+            border: 1px solid #ced4da;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f8f9fa;
+            border-color: #adb5bd;
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+        }
+
+        #summaryOutput {
+            background-color: white;
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            line-height: 1.7;
+        }
+
+        #summaryOutput h3 {
+            color: var(--primary);
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .chess-board {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .time-plot {
+            max-width: 100%;
+            border-radius: 8px;
+            margin: 20px 0;
+            border: 1px solid #eee;
+        }
+
+        .game-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 12px 20px;
+            background-color: var(--primary);
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 15px;
+            transition: all 0.2s;
+        }
+
+        .game-link:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .game-link-icon {
+            margin-right: 8px;
         }
 
         #loadingSpinner {
             display: none;
-            margin: 20px auto;
-            border: 6px solid #f3f3f3;
-            border-top: 6px solid #007bff;
+            margin: 40px auto;
+            border: 5px solid rgba(74, 111, 165, 0.1);
+            border-top: 5px solid var(--primary);
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
+            position: relative;
+        }
+
+        #loadingSpinner::after {
+            content: "Analyzing...";
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary);
+            font-weight: 500;
+            white-space: nowrap;
         }
 
         @keyframes spin {
@@ -71,14 +231,60 @@
             100% { transform: rotate(360deg); }
         }
 
-        #summaryOutput {
-            background-color: #fff;
-            max-width: 700px;
-            margin: 30px auto 0;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
-            white-space: pre-wrap;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+            
+            section {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .alert-info {
+            background-color: #e7f5ff;
+            color: #1864ab;
+            border-left: 4px solid #4dabf7;
+        }
+
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background-color: rgba(0,0,0,0.1);
+            margin: 40px auto;
+            max-width: 800px;
         }
     </style>
 </head>
@@ -88,7 +294,7 @@
 
 <!-- 1️⃣ Upload New PGN Section -->
 <section>
-    <h2>Upload and Summarize a New Game</h2>
+    <h2>📤 Upload and Summarize a New Game</h2>
     <form id="pgnForm" onsubmit="handleSubmit(event)">
         {% csrf_token %}
         <label for="pgn_text">Paste PGN Text:</label>
@@ -96,10 +302,14 @@
 
         <label for="pgn_file">Or Upload PGN File:</label>
         <input type="file" name="pgn_file" id="pgn_file" accept=".pgn"/>
-
-        <div>
-            <button type="submit">Summarize New Game</button>
-            <button type="button" onclick="handleRefresh()">Clear</button>
+        
+        <div class="button-group">
+            <button type="submit" class="btn btn-primary">
+                <span class="btn-icon">📊</span> Summarize New Game
+            </button>
+            <button type="button" onclick="handleRefresh()" class="btn btn-secondary">
+                <span class="btn-icon">🔄</span> Clear
+            </button>
         </div>
     </form>
 </section>
@@ -108,11 +318,10 @@
 
 <!-- 2️⃣ Analyze Existing Games Section -->
 <section>
-    <h2>Analyze an Existing Game</h2>
-
+    <h2>🔍 Analyze an Existing Game</h2>
     {% if games %}
     <label for="existingGame">Select a Past Game:</label>
-    <select id="existingGame">
+    <select id="existingGame" class="form-select">
         <option value="">-- Select a Game --</option>
         {% for game in games %}
             <option value="{{ game.id }}">
@@ -120,9 +329,13 @@
             </option>
         {% endfor %}
     </select>
-    <button onclick="analyzeSelectedGame()">Analyze Selected Game</button>
+    <button onclick="analyzeSelectedGame()" class="btn btn-primary">
+        <span class="btn-icon">🔎</span> Analyze Selected Game
+    </button>
     {% else %}
-    <p>No past games found.</p>
+    <div class="alert alert-info">
+        No past games found in your history.
+    </div>
     {% endif %}
 </section>
 
@@ -130,7 +343,6 @@
 
 <div id="summaryOutput"></div>
 
-<!-- JavaScript -->
 <script>
 async function handleSubmit(event) {
     event.preventDefault();
@@ -140,7 +352,7 @@ async function handleSubmit(event) {
     const spinner = document.getElementById('loadingSpinner');
     const outputDiv = document.getElementById('summaryOutput');
     spinner.style.display = 'block';
-    outputDiv.innerText = '';
+    outputDiv.innerHTML = '';
 
     try {
         const response = await fetch("/game_summarizer/summarize/", {
@@ -151,10 +363,10 @@ async function handleSubmit(event) {
         if (response.ok) {
             showSummary(data);
         } else {
-            outputDiv.innerText = data.error || "Something went wrong.";
+            outputDiv.innerHTML = `<div class="alert alert-info">${data.error || "Something went wrong."}</div>`;
         }
     } catch (err) {
-        outputDiv.innerText = "Error submitting the form.";
+        outputDiv.innerHTML = '<div class="alert alert-info">Error submitting the form.</div>';
     } finally {
         spinner.style.display = 'none';
     }
@@ -172,7 +384,7 @@ async function analyzeSelectedGame() {
     const spinner = document.getElementById('loadingSpinner');
     const outputDiv = document.getElementById('summaryOutput');
     spinner.style.display = 'block';
-    outputDiv.innerText = '';
+    outputDiv.innerHTML = '';
 
     try {
         const response = await fetch(`/game_summarizer/analyze_existing/${gameId}/`);
@@ -180,10 +392,10 @@ async function analyzeSelectedGame() {
         if (response.ok) {
             showSummary(data);
         } else {
-            outputDiv.innerText = data.error || "Something went wrong.";
+            outputDiv.innerHTML = `<div class="alert alert-info">${data.error || "Something went wrong."}</div>`;
         }
     } catch (err) {
-        outputDiv.innerText = "Error fetching existing game.";
+        outputDiv.innerHTML = '<div class="alert alert-info">Error fetching existing game.</div>';
     } finally {
         spinner.style.display = 'none';
     }
@@ -192,17 +404,34 @@ async function analyzeSelectedGame() {
 function showSummary(data) {
     const outputDiv = document.getElementById('summaryOutput');
     outputDiv.innerHTML = data.summary;
+    
     if (data.image_url) {
         outputDiv.innerHTML += `
-            <h3 style="margin-top: 30px;">⏱ Time Analysis Plot</h3>
-            <img src="${data.image_url}" alt="Time Analysis Plot" style="max-width: 100%; margin-top: 10px;" />
+            <h3>⏱ Time Analysis Plot</h3>
+            <img src="${data.image_url}" alt="Time Analysis Plot" class="time-plot" />
+        `;
+    }
+
+    if (data.wdl_url) {
+        outputDiv.innerHTML += `
+            <h3 style="margin-top: 30px;">📉 WDL Probability Chart</h3>
+            <img src="${data.wdl_url}" alt="WDL Plot" style="max-width: 100%; margin-top: 10px;" />
+        `;
+    }
+
+    if (data.video_url && data.video_url.includes("chess.com/game/")) {
+        outputDiv.innerHTML += `
+            <h3>🎯 View Game on Chess.com</h3>
+            <a href="${data.video_url}" target="_blank" class="game-link">
+                <span class="game-link-icon">♟️</span> Open Game in New Tab
+            </a>
         `;
     }
 }
 
 function handleRefresh() {
     document.getElementById('pgnForm').reset();
-    document.getElementById('summaryOutput').innerText = '';
+    document.getElementById('summaryOutput').innerHTML = '';
 }
 </script>
 

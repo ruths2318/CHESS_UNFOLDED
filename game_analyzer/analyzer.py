@@ -13,11 +13,10 @@ class Analyzer:
         for i, move in enumerate(game.moves):
             self.sf.set_fen_position(board.fen())
             move.eval_before = self.sf.get_evaluation()
-            #print(f"Move {i+1}: {move.san}, Eval before: {move.eval_before}")
             board.push_san(move.san)
             self.sf.set_fen_position(board.fen())
             move.eval_after = self.sf.get_evaluation()
-            #print(f"           Eval after: {move.eval_after}")
+            
 
     def to_cp(self,eval_dict):
         if eval_dict["type"] == "cp":
@@ -48,33 +47,64 @@ class Analyzer:
         return blunders
     
 
-    def find_best_move(self,game):
-        best_moves=[]
+    def find_best_moves(self, game):
+        best_moves = []
         board = chess.Board()
-        for i, move in enumerate(game.moves):
+
+        for move in game.moves:
+            # Set position BEFORE move
             self.sf.set_fen_position(board.fen())
-           
-            board.push_san(move.san)
-            self.sf.set_fen_position(board.fen())
-            best_move=self.sf.get_best_move()
-            best_moves.append(best_move)
+
+            # Get best move from Stockfish at this point
+            best_move_uci = self.sf.get_best_move()
+
+            # Convert actual move from SAN to UCI
+            try:
+                actual_move = board.parse_san(move.san)
+            except ValueError:
+                continue  
+
+            if best_move_uci == actual_move.uci():
+                best_moves.append({
+                    'move_number': board.fullmove_number,
+                    'player': 'White' if board.turn else 'Black',
+                    'move': move.san,
+                    'uci': actual_move.uci()
+                })
+
+            # Now make the move on the board
+            board.push(actual_move)
 
         return best_moves
 
+    def normalize_wdl(self,wdl_raw):
+        total = sum(wdl_raw)
+        return {
+            'white': round(100 * wdl_raw[0] / total, 1),
+            'draw': round(100 * wdl_raw[1] / total, 1),
+            'black': round(100 * wdl_raw[2] / total, 1)
+        }
 
 
-    def get_wdl_stats(self,game):
-        wdl_stats=[]
+    def get_wdl_stats(self, game):
+        wdl_stats = []
         board = chess.Board()
-        for i, move in enumerate(game.moves):
+
+        for move in game.moves:
+            # Get WDL before move
             self.sf.set_fen_position(board.fen())
-           
-            board.push_san(move.san)
-            self.sf.set_fen_position(board.fen())
-            best_move=self.sf.get_wdl_stats()
-            wdl_stats.append(best_move)
+            wdl = self.sf.get_wdl_stats()  
+            normalized_wdl=self.normalize_wdl(wdl) # Returns {'white': int, 'draw': int, 'black': int}
+            wdl_stats.append(normalized_wdl)
+
+            # Play the move
+            try:
+                board.push_san(move.san)
+            except ValueError:
+                break  # Stop if move is invalid 
 
         return wdl_stats
+
 
     def find_mistakes(self,game, thresholds=(50, 100, 300)):
         inaccuracies = []
