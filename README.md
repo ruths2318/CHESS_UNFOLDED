@@ -19,7 +19,9 @@ You can analyze **past games stored in a database** or **upload a new `.pgn` fil
     ```
     pip install -r requirements.txt
     ```
-4. **Run the development server**
+4. create a .env file in the root directory(inside /CHESS_UNFOLDED folder),to store the API key(.env is submitted on canvas)
+
+5. **Run the development server**
     ```
     python manage.py runserver
     ```
@@ -48,3 +50,9 @@ Once the server is running, the homepage gives you **two options** for analysis:
   - Time plot
   - WDL (Win/Draw/Loss) chart
   - Chess.com replay link    
+
+
+## To Run the tests
+
+  To run the tests execute the command:
+    ``` pytest```
