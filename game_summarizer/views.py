@@ -8,9 +8,8 @@ from game_analyzer import summarizer
 
 
 def index(request):
-    games = Game.objects.all().order_by('-date')  # Show recent first
+    games = Game.objects.all().order_by('-date') 
     return render(request, 'index.html', {"games": games})
-    #return render(request, 'index.html')
 
 def summarize(request):
     if request.method == 'POST':
@@ -35,14 +34,9 @@ def summarize(request):
             result=objects['result']
         )
 
-        #games = Game.objects.all()
-        #print(games)
-
-        # return the plots
-        # summary    
-        # game link
         return JsonResponse({'summary': response_text,
                              "image_url":'/static/plots/time_plot.png',
+                             "wdl_url":'/static/plots/wdl_plot.png',
                              "video_url": objects['link']})
     return JsonResponse({'error': 'Invalid request method.'}, status=405)
 
@@ -56,5 +50,6 @@ def analyze_existing_game(request, game_id):
         return JsonResponse({
             'summary': response_text,
             'image_url': '/static/plots/time_plot.png',
+            "wdl_url":'/static/plots/wdl_plot.png',
             "video_url": objects['link']
         })

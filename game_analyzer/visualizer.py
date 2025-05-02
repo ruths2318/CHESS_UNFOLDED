@@ -29,6 +29,37 @@ def plot_time_deltas(game, filename="time_plot.png"):
     plt.savefig(full_path)
     plt.close()
 
+
+def plot_wdl_over_moves(wdl_by_move, moves=None, filename='wdl_plot.png'):
+
+
+    folder = os.path.join(settings.BASE_DIR, "game_analyzer", "static", "plots")
+    os.makedirs(folder, exist_ok=True)
+
+    full_path = os.path.join(folder, filename)
+
+    white_probs = [wdl['white'] for wdl in wdl_by_move]
+    draw_probs = [wdl['draw'] for wdl in wdl_by_move]
+    black_probs = [wdl['black'] for wdl in wdl_by_move]
+
+    x = list(range(1, len(wdl_by_move) + 1))
+
+    plt.figure(figsize=(12, 6))
+    plt.stackplot(x, white_probs, draw_probs, black_probs, labels=['White', 'Draw', 'Black'], alpha=0.85)
+    plt.legend(loc='upper right')
+    plt.title('WDL Probabilities Over Game Moves')
+    plt.xlabel('Move Number')
+    plt.ylabel('Probability (%)')
+
+    # if moves:
+    #     plt.xticks(x, moves, rotation=90)
+
+    plt.tight_layout()
+    plt.savefig(full_path)
+    plt.close()
+
+
+
 def save_board_snapshot(fen, filename="board.svg"):
     board = chess.Board(fen)
     svg = chess.svg.board(board)

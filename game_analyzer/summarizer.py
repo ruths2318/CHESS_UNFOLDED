@@ -1,37 +1,32 @@
 # from game import Move 
 # from game import ChessGame
 from .pgn_parser import PGNParser
-from .visualizer import plot_time_deltas
+from .visualizer import plot_time_deltas,plot_wdl_over_moves
 from .analyzer import Analyzer
 from groq import Groq
 from django.conf import settings
 
-# def read_pgn_file(file_path):
-#     with open(file_path, 'r', encoding='utf-8') as f:
-#         return f.read()
-
+def read_pgn_file(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:
+        return f.read()
 
 def get_objects(pgn_text):
 
     parser=PGNParser()
-    #pgn_text = read_pgn_file('./data/sample/data.pgn')
+    #pgn_text = read_pgn_file('data/sample/data.pgn')
     game=parser.parse_pgn(pgn_text)
-    #print(game.moves)
     white,black=game.get_time_deltas()
-    #print(sum(white)+sum(black))
     plot_time_deltas(game)
     analyzer=Analyzer(r".\engine\stockfish\stockfish-windows-x86-64-avx2.exe")
     analyzer.analyze_game(game)
     blunders=analyzer.find_blunders(game)
-    #print("blunders",blunders)
-    best_moves=analyzer.find_best_move(game)
-    #print("best_moves",best_moves)
+    best_moves=analyzer.find_best_moves(game)
     wdl_stats=analyzer.get_wdl_stats(game)
-    #print("wdl_stats",wdl_stats)
+    print(wdl_stats)
+    san_moves = [move.san for move in game.moves]
+    plot_wdl_over_moves(wdl_stats,san_moves)
     mistakes=analyzer.find_mistakes(game)
-    #print("mistakes",mistakes)
     highlights=analyzer.find_highlights(game)
-    #print("highlights",highlights)
     objects={}
     objects['blunders']=blunders
     objects['best_moves']=best_moves
@@ -40,7 +35,7 @@ def get_objects(pgn_text):
     objects['player_1']=game.white
     objects['player_2']=game.black
     objects['date']=game.date
-    objects['result']=objects['player_1'] if game.result == '1-0' else objects['player_2']
+    objects['result']=game.result
     objects['link']=game.link
     return objects
 
@@ -48,14 +43,12 @@ def generate_llm_summary(objects):
 
     client = Groq(api_key=settings.API_KEY)
 
-    # Build a structured, readable prompt from the dictionary
     summary_prompt = f"""
-    Summarize the following chess game in an engaging, article-style summary:
     
     - Date: {objects['date']}
     - White: {objects['player_1']}
     - Black: {objects['player_2']}
-    - Result: {objects['result']} won
+    - Result: {objects['result']}  .
 
     Key Game Insights:
     - Blunders: {objects['blunders']}
@@ -63,7 +56,7 @@ def generate_llm_summary(objects):
     - Mistakes: {objects['mistakes']}
     - Highlights: {objects['highlights']}
 
-    You are a chess journalist summarizing the game. Return your summary as an HTML <div> with headings, styled paragraphs, and bullet points where appropriate.
+    Summarize the chess game in an engaging, article-style summary. Return your summary as an HTML <div> with headings, styled paragraphs, and bullet points where ever appropriate.
     """
 
     completion = client.chat.completions.create(
@@ -89,5 +82,5 @@ def get_summary(pgn_text):
     summary=generate_llm_summary(objects)
     return summary,objects
 
-#main()
+
 

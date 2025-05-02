@@ -412,6 +412,13 @@ function showSummary(data) {
         `;
     }
 
+    if (data.wdl_url) {
+        outputDiv.innerHTML += `
+            <h3 style="margin-top: 30px;">📉 WDL Probability Chart</h3>
+            <img src="${data.wdl_url}" alt="WDL Plot" style="max-width: 100%; margin-top: 10px;" />
+        `;
+    }
+
     if (data.video_url && data.video_url.includes("chess.com/game/")) {
         outputDiv.innerHTML += `
             <h3>🎯 View Game on Chess.com</h3>

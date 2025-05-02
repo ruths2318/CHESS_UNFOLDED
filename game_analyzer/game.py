@@ -22,22 +22,6 @@ class ChessGame:
     def add_move(self, move):
         self.moves.append(move)
 
-    # def get_time_deltas(self):
-        
-    #     deltas = []
-    #     #print(deltas)
-    #     #print(self.moves)
-    #     prev_time = None
-    #     for move in self.moves:
-    #         #print(move.clock_time)
-    #         if move.clock_time is not None:
-    #             if prev_time is not None:
-    #                 deltas.append(prev_time - move.clock_time)
-    #             prev_time = move.clock_time
-
-    #     #print(deltas)
-    #     return deltas
-
     def get_time_deltas(game):
         white_deltas = []
         black_deltas = []
