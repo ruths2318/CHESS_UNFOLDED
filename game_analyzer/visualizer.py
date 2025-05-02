@@ -1,4 +1,7 @@
-# analysis/visualizer.py
+# Author: Ruthura ,Sravanthi
+# Date: 05-02-2025
+# Description : This code generates plots like a time plot of moves for each player and WDL probability plot.
+
 import matplotlib.pyplot as plt
 import chess
 import chess.svg

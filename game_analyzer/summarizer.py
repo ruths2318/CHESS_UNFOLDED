@@ -1,5 +1,9 @@
-# from game import Move 
-# from game import ChessGame
+# Author: Ruthura ,Sravanthi
+# Date: 05-02-2025
+# Description : This code summarizes the chess game by finding mistakes,game highlights,blunders,turning points,best moves,etc
+# and generates text summary from llm.
+
+
 from .pgn_parser import PGNParser
 from .visualizer import plot_time_deltas,plot_wdl_over_moves
 from .analyzer import Analyzer

@@ -1,4 +1,7 @@
-# analysis/analyzer.py
+# Author: Ruthura ,Sravanthi
+# Date: 05-02-2025
+# Description : This code finds mistakes,game highlights,blunders,turning points,best moves,etc with the help of stockfish integeration.
+
 from stockfish import Stockfish
 import chess
 import chess.pgn

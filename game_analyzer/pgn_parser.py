@@ -1,3 +1,6 @@
+# Author: Ruthura ,Sravanthi
+# Date: 05-02-2025
+# Description : This code parses the PGN file to create a chess game object.
 
 import re
 import io

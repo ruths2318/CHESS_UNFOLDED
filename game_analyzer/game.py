@@ -1,3 +1,6 @@
+# Author: Ruthura ,Sravanthi
+# Date: 05-02-2025
+# Description : This code defines a Move class,Chess Game Class to store information about each move and each individual game.
 
 class Move:
     def __init__(self, move_number, san, clock_time=None, timestamp=None):

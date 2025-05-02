@@ -1,3 +1,7 @@
+# Author: Ruthura ,Sravanthi
+# Date: 05-02-2025
+# Description : This code defines a table to store each game in the database.
+
 from django.db import models
 
 # Create your models here.

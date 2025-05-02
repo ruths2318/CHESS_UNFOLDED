@@ -1,3 +1,7 @@
+# Author: Ruthura ,Sravanthi
+# Date: 05-02-2025
+# Description : This code stores all the views for this app.
+
 from django.shortcuts import render,get_object_or_404
 
 # Create your views here.
