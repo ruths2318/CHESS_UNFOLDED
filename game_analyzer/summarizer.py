@@ -22,7 +22,7 @@ def get_objects(pgn_text):
     blunders=analyzer.find_blunders(game)
     best_moves=analyzer.find_best_moves(game)
     wdl_stats=analyzer.get_wdl_stats(game)
-    print(wdl_stats)
+    #print(wdl_stats)
     san_moves = [move.san for move in game.moves]
     plot_wdl_over_moves(wdl_stats,san_moves)
     mistakes=analyzer.find_mistakes(game)
