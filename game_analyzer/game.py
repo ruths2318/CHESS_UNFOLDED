@@ -3,6 +3,18 @@
 # Description : This code defines a Move class,Chess Game Class to store information about each move and each individual game.
 
 class Move:
+    """
+    Represents a single move in a chess game.
+
+    Attributes:
+        move_number (int): The move number in the game.
+        san (str): Standard Algebraic Notation (SAN) for the move.
+        clock_time (float): Remaining time after the move in seconds.
+        timestamp (float): Optional timestamp for when the move was played.
+        eval_before (dict): Stockfish evaluation before the move.
+        eval_after (dict): Stockfish evaluation after the move.
+    """
+
     def __init__(self, move_number, san, clock_time=None, timestamp=None):
         self.move_number = move_number
         self.san = san
@@ -12,6 +24,19 @@ class Move:
         self.eval_after = None
 
 class ChessGame:
+    """
+    Represents a full chess game with metadata and list of moves.
+
+    Attributes:
+        date (datetime.date): Date of the game.
+        white (str): Name of the white player.
+        black (str): Name of the black player.
+        result (str): Game result (e.g., "1-0", "0-1", "draw").
+        time_control (str): Format of time control (e.g., "600").
+        link (str): External link to the game (e.g., chess.com link).
+        moves (list): List of Move objects.
+        metadata (dict): Additional PGN header information.
+    """
     def __init__(self, date,white, black, result, time_control, link,moves=None):
         self.date=date
         self.white = white
@@ -23,9 +48,21 @@ class ChessGame:
         self.metadata = {}
 
     def add_move(self, move):
+        """
+        Adds a Move object to the game's move list.
+
+        Args:
+            move (Move): The move to be added.
+        """
         self.moves.append(move)
 
     def get_time_deltas(game):
+        """
+        Computes time taken per move by each player based on clock times.
+
+        Returns:
+            tuple: Two lists containing time spent on each move by white and black.
+        """
         white_deltas = []
         black_deltas = []
 
