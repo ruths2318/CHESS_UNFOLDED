@@ -13,7 +13,7 @@ def test_plot_time_deltas_creates_file(tmp_path):
     with mock.patch("visualizer.settings") as mock_settings:
         mock_settings.BASE_DIR = tmp_path
 
-        # Call the function
+
         visualizer.plot_time_deltas(mock_game, filename="test_time_plot.png")
 
         # The file should now exist in the mocked folder
@@ -28,7 +28,7 @@ def test_plot_wdl_over_moves_creates_file(tmp_path):
     with mock.patch("visualizer.settings") as mock_settings:
         mock_settings.BASE_DIR = tmp_path
 
-        # Call the function
+
         visualizer.plot_wdl_over_moves(dummy_wdl, filename="test_wdl_plot.png")
 
         # Check if file was created
@@ -41,7 +41,6 @@ def test_save_board_snapshot_creates_file(tmp_path):
 
     filename = tmp_path / "test_board.svg"
 
-    # Call the function
     visualizer.save_board_snapshot(fen, filename=str(filename))
 
     # Check if file was created

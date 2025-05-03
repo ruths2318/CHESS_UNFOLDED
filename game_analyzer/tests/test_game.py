@@ -1,13 +1,13 @@
 # test_game.py
 
 import pytest
-from game import ChessGame, Move  # We’re testing these classes
+from game import ChessGame, Move
 
 
 def test_chess_game_creation():
-    # Let's check if creating a ChessGame works properly
 
-    # We make a game with some example details, adding a dummy link too
+
+
     game = ChessGame(
         white="Magnus Carlsen",
         black="Hikaru Nakamura",
@@ -17,7 +17,7 @@ def test_chess_game_creation():
         link="https://example.com/game"  # we add a fake link here
     )
 
-    # Now we check if the game saved all the info we gave it
+    # we check if the game saved all the info we gave it
     assert game.white == "Magnus Carlsen"
     assert game.black == "Hikaru Nakamura"
     assert game.result == "1-0"
@@ -27,7 +27,6 @@ def test_chess_game_creation():
 
     # Since it’s a new game, it shouldn’t have any moves yet
     assert game.moves == []
-
 
 def test_add_move():
     # We want to make sure adding a move actually works

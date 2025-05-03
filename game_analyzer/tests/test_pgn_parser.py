@@ -22,7 +22,7 @@ sample_pgn = """
 
 def test_parse_clock_with_valid_comment():
     # Test if the parser correctly extracts clock time from a valid comment.
-    # Example input: [%clk 0:10:15.2] means 10 minutes, 15.2 seconds left.
+
     result = PGNParser.parse_clock("[%clk 0:10:15.2]")
     expected_seconds = 10 * 60 + 15 + 0.2  # 10 minutes * 60 + 15 seconds + 0.2
     assert result == expected_seconds
@@ -33,7 +33,7 @@ def test_parse_clock_with_invalid_comment():
     assert result is None
 
 def test_parse_pgn_returns_chess_game():
-    # Create a parser instance
+
     parser = PGNParser()
 
     # Parse the sample PGN string into a ChessGame object

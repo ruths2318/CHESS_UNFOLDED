@@ -2,7 +2,6 @@ import pytest
 from unittest.mock import MagicMock, patch
 from analyzer import Analyzer
 
-# This fixture creates a mock ChessGame object with one move
 @pytest.fixture
 def mock_game():
     # Create a fake move with basic evaluation values
@@ -16,7 +15,7 @@ def mock_game():
     game.moves = [mock_move]
     return game
 
-# This fixture creates an Analyzer object but mocks Stockfish so it doesn't use the real engine
+
 @pytest.fixture
 def analyzer():
     # We "patch" Stockfish inside the analyzer module so no real Stockfish engine is needed
