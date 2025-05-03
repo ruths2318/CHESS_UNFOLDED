@@ -5,7 +5,7 @@
 from stockfish import Stockfish
 import chess
 import chess.pgn
-from .game import ChessGame
+from game_analyzer.game import ChessGame
 
 class Analyzer:
     """
