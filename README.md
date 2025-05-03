@@ -51,7 +51,7 @@ Once the server is running, the homepage gives you **two options** for analysis:
   - WDL (Win/Draw/Loss) chart
   - Chess.com replay link    
 
-
+---
 ## To Run the tests
 
   To run the tests execute the command:
