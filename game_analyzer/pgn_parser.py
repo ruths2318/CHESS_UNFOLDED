@@ -6,7 +6,7 @@ import re
 import io
 import chess
 import chess.pgn
-from .game import ChessGame, Move
+from game_analyzer.game import ChessGame, Move
 from datetime import datetime
 
 class PGNParser:
