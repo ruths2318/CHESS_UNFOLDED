@@ -9,6 +9,13 @@ import os
 from django.conf import settings
 
 def plot_time_deltas(game, filename="time_plot.png"):
+    """
+    Plots the time spent per move by both players and saves the figure.
+
+    Args:
+        game: A parsed ChessGame object with time information.
+        filename (str): Name of the image file to save.
+    """
 
     folder = os.path.join(settings.BASE_DIR, "game_analyzer", "static", "plots")
     os.makedirs(folder, exist_ok=True)
@@ -34,7 +41,14 @@ def plot_time_deltas(game, filename="time_plot.png"):
 
 
 def plot_wdl_over_moves(wdl_by_move, moves=None, filename='wdl_plot.png'):
+    """
+    Plots stacked area chart for WDL (Win/Draw/Loss) probabilities across moves.
 
+    Args:
+        wdl_by_move (list): List of dicts with keys 'white', 'draw', 'black'.
+        moves (list): Optional list of SAN moves to use on x-axis.
+        filename (str): Filename to save the plot as.
+    """
 
     folder = os.path.join(settings.BASE_DIR, "game_analyzer", "static", "plots")
     os.makedirs(folder, exist_ok=True)
@@ -64,6 +78,14 @@ def plot_wdl_over_moves(wdl_by_move, moves=None, filename='wdl_plot.png'):
 
 
 def save_board_snapshot(fen, filename="board.svg"):
+    """
+    Saves a visual snapshot of the board for the given FEN position.
+
+    Args:
+        fen (str): FEN string of the board state.
+        filename (str): Output SVG filename.
+    """
+    
     board = chess.Board(fen)
     svg = chess.svg.board(board)
     with open(filename, "w") as f:
